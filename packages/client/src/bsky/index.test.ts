@@ -13,13 +13,13 @@ const formatSecret = (secret: string | undefined) => {
 const env = process.env;
 const TEST_CREDENTIALS = {
   alice: {
-    handle: 'alice.tsky.dev',
-    did: 'did:plc:jguhdmnjclquqf5lsvkyxqy3',
+    handle: 'alice.pds.shuuji3.xyz',
+    did: 'did:plc:7e2j6gxvsjzwhmmlc2www4zd',
     appPassword: formatSecret(env.ALICE_APP_PASSWORD),
   },
   bob: {
-    handle: 'bob.tsky.dev',
-    did: 'did:plc:2ig7akkyfq256j42uxvc4g2h',
+    handle: 'bob.pds.shuuji3.xyz',
+    did: 'did:plc:47xlh7aza4kqud343tci3hcu',
     appPassword: formatSecret(env.BOB_APP_PASSWORD),
   },
 };
@@ -27,7 +27,9 @@ const TEST_CREDENTIALS = {
 console.log('env keys', Object.keys(process.env));
 
 async function getAliceTsky() {
-  const manager = new CredentialManager({ service: 'https://bsky.social' });
+  const manager = new CredentialManager({ service: 'https://pds.shuuji3.xyz' });
+  console.log('manager', manager);
+  console.log('TEST_CREDENTIALS', TEST_CREDENTIALS);
   await manager.login({
     identifier: TEST_CREDENTIALS.alice.handle,
     password: TEST_CREDENTIALS.alice.appPassword,
