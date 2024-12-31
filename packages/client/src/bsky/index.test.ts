@@ -1,0 +1,66 @@
+import { CredentialManager } from '@atcute/client';
+import { describe, expect, it } from 'vitest';
+import { Tsky } from '~/index';
+
+const formatSecret = (secret: string | undefined) => {
+  if (!secret) {
+    throw new Error('Secret is required');
+  }
+
+  return secret.replace(/^tsky /g, '').trim();
+};
+
+const env = process.env;
+const TEST_CREDENTIALS = {
+  alice: {
+    handle: 'alice.pds.shuuji3.xyz',
+    did: 'did:plc:7e2j6gxvsjzwhmmlc2www4zd',
+    appPassword: formatSecret(env.ALICE_APP_PASSWORD),
+  },
+  bob: {
+    handle: 'bob.pds.shuuji3.xyz',
+    did: 'did:plc:47xlh7aza4kqud343tci3hcu',
+    appPassword: formatSecret(env.BOB_APP_PASSWORD),
+  },
+};
+
+console.log('env keys', Object.keys(process.env));
+
+async function getAliceTsky() {
+  const manager = new CredentialManager({ service: 'https://pds.shuuji3.xyz' });
+  console.log('manager', manager);
+  console.log('TEST_CREDENTIALS', TEST_CREDENTIALS);
+  await manager.login({
+    identifier: TEST_CREDENTIALS.alice.handle,
+    password: TEST_CREDENTIALS.alice.appPassword,
+  });
+
+  return new Tsky(manager);
+}
+
+describe('bsky', () => {
+  it('.profile()', async () => {
+    const tsky = await getAliceTsky();
+    const profile = await tsky.bsky.profile(TEST_CREDENTIALS.alice.did);
+
+    expect(profile).toBeDefined();
+    expect(profile).toHaveProperty('handle', TEST_CREDENTIALS.alice.handle);
+  });
+
+  describe('feed', () => {
+    it('.timeline()', async () => {
+      const tsky = await getAliceTsky();
+
+      const paginator = await tsky.bsky.feed.getTimeline({
+        limit: 30,
+      });
+
+      expect(paginator).toBeDefined();
+      expect(paginator.values).toBeDefined();
+      expect(paginator.values).toBeInstanceOf(Array);
+      expect(paginator.values.length).toBe(1); // we should get the first page from the paginator
+      expect(paginator.values[0].feed.length).toBeGreaterThan(0); // alice has some posts ;)
+      expect(paginator.values[0].feed[0]).toHaveProperty('post');
+    });
+  });
+});
