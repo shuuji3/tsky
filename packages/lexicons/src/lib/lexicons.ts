@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2025-01-09T12:45:41.061Z
+ * Generated on: 2025-01-19T08:09:58.687Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/53621f8e100a3aa3c1caff10a08d3f4ea919875a/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/cbf17066f314fbc7f2e943127ee4a9f589f8bec2/lexicons
  */
 
 /** Base type with optional type field */
@@ -368,6 +368,8 @@ export declare namespace AppBskyActorGetSuggestions {
   interface Output extends TypedBase {
     actors: AppBskyActorDefs.ProfileView[];
     cursor?: string;
+    /** Snowflake for this recommendation, use when submitting recommendation events. */
+    recId?: number;
   }
 }
 
@@ -627,6 +629,8 @@ export declare namespace AppBskyFeedDefs {
   type ClickthroughEmbed = "app.bsky.feed.defs#clickthroughEmbed";
   type ClickthroughItem = "app.bsky.feed.defs#clickthroughItem";
   type ClickthroughReposter = "app.bsky.feed.defs#clickthroughReposter";
+  type ContentModeUnspecified = "app.bsky.feed.defs#contentModeUnspecified";
+  type ContentModeVideo = "app.bsky.feed.defs#contentModeVideo";
   interface FeedViewPost extends TypedBase {
     post: PostView;
     /**
@@ -646,6 +650,10 @@ export declare namespace AppBskyFeedDefs {
     uri: At.Uri;
     acceptsInteractions?: boolean;
     avatar?: string;
+    contentMode?:
+      | "app.bsky.feed.defs#contentModeUnspecified"
+      | "app.bsky.feed.defs#contentModeVideo"
+      | (string & {});
     /**
      * Maximum string length: 3000
      * Maximum grapheme length: 300
@@ -793,6 +801,10 @@ export declare namespace AppBskyFeedGenerator {
     /** Declaration that a feed accepts feedback interactions from a client through app.bsky.feed.sendInteractions */
     acceptsInteractions?: boolean;
     avatar?: At.Blob;
+    contentMode?:
+      | "app.bsky.feed.defs#contentModeUnspecified"
+      | "app.bsky.feed.defs#contentModeVideo"
+      | (string & {});
     /**
      * Maximum string length: 3000
      * Maximum grapheme length: 300
@@ -1703,6 +1715,8 @@ export declare namespace AppBskyGraphGetSuggestedFollowsByActor {
      * \@default false
      */
     isFallback?: boolean;
+    /** Snowflake for this recommendation, use when submitting recommendation events. */
+    recId?: number;
   }
 }
 
@@ -2097,6 +2111,8 @@ export declare namespace AppBskyUnspeccedGetSuggestionsSkeleton {
   interface Output extends TypedBase {
     actors: AppBskyUnspeccedDefs.SkeletonSearchActor[];
     cursor?: string;
+    /** Snowflake for this recommendation, use when submitting recommendation events. */
+    recId?: number;
     /** DID of the account these suggestions are relative to. If this is returned undefined, suggestions are based on the viewer. */
     relativeToDid?: At.DID;
   }
@@ -3018,6 +3034,15 @@ export declare namespace ComAtprotoLabelSubscribeLabels {
   interface Labels extends TypedBase {
     labels: ComAtprotoLabelDefs.Label[];
     seq: number;
+  }
+}
+
+export declare namespace ComAtprotoLexiconSchema {
+  /** Representation of Lexicon schemas themselves, when published as atproto records. Note that the schema language is not defined in Lexicon; this meta schema currently only includes a single version field ('lexicon'). See the atproto specifications for description of the other expected top-level fields ('id', 'defs', etc). */
+  interface Record extends RecordBase {
+    $type: "com.atproto.lexicon.schema";
+    /** Indicates the 'version' of the Lexicon language. Must be '1' for the current atproto/Lexicon schema system. */
+    lexicon: number;
   }
 }
 
@@ -5204,6 +5229,7 @@ export declare interface Records extends RecordBase {
   "app.bsky.graph.starterpack": AppBskyGraphStarterpack.Record;
   "app.bsky.labeler.service": AppBskyLabelerService.Record;
   "chat.bsky.actor.declaration": ChatBskyActorDeclaration.Record;
+  "com.atproto.lexicon.schema": ComAtprotoLexiconSchema.Record;
 }
 
 export declare interface Queries {
